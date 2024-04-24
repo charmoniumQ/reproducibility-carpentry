@@ -160,6 +160,10 @@
 
       What is "dependency resolution"?
 
+      Dependency resolution is NP-COMPLETE.
+
+      https://research.swtch.com/version-sat
+
       What is "bootstrapping"?
     }
   }

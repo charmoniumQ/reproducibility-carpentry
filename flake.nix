@@ -104,6 +104,7 @@
               packages.varnish
               packages.pegboard
               pkgs.rPackages.tinkr
+              pkgs.rstudio
             ];
             shellHook = ''
               alias R='R --no-restore --no-save'
