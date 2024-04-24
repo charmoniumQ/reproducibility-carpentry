@@ -1,45 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://carpentries.github.io/workbench-template-rmd/404.html</loc>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/404.html</loc>
   </url>
   <url>
-    <loc>https://carpentries.github.io/workbench-template-rmd/CODE_OF_CONDUCT.html</loc>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/CODE_OF_CONDUCT.html</loc>
   </url>
   <url>
-    <loc>https://carpentries.github.io/workbench-template-rmd/LICENSE.html</loc>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://carpentries.github.io/workbench-template-rmd/index.html</loc>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/aio.html</loc>
   </url>
   <url>
-    <loc>https://carpentries.github.io/workbench-template-rmd/instructor/404.html</loc>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/containerization_and_virtualization.html</loc>
   </url>
   <url>
-    <loc>https://carpentries.github.io/workbench-template-rmd/instructor/CODE_OF_CONDUCT.html</loc>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/images.html</loc>
   </url>
   <url>
-    <loc>https://carpentries.github.io/workbench-template-rmd/instructor/LICENSE.html</loc>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/index.html</loc>
   </url>
   <url>
-    <loc>https://carpentries.github.io/workbench-template-rmd/instructor/index.html</loc>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/404.html</loc>
   </url>
   <url>
-    <loc>https://carpentries.github.io/workbench-template-rmd/instructor/introduction.html</loc>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/CODE_OF_CONDUCT.html</loc>
   </url>
   <url>
-    <loc>https://carpentries.github.io/workbench-template-rmd/instructor/profiles.html</loc>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://carpentries.github.io/workbench-template-rmd/instructor/reference.html</loc>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/aio.html</loc>
   </url>
   <url>
-    <loc>https://carpentries.github.io/workbench-template-rmd/introduction.html</loc>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/containerization_and_virtualization.html</loc>
   </url>
   <url>
-    <loc>https://carpentries.github.io/workbench-template-rmd/profiles.html</loc>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/images.html</loc>
   </url>
   <url>
-    <loc>https://carpentries.github.io/workbench-template-rmd/reference.html</loc>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/index.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/instructor-notes.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/introduction.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/key-points.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/package_management.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/package_managers_in_practice.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/profiles.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/reference.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/reproducibility_definition.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor-notes.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/introduction.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/key-points.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/package_management.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/package_managers_in_practice.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/profiles.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/reference.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/reproducibility_definition.html</loc>
   </url>
 </urlset>
