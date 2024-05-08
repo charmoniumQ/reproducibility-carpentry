@@ -1,5 +1,5 @@
 ---
-title: "Package managers in practice"
+title: "Engineering Reproducible Software"
 teaching: 10
 exercises: 2
 ---
@@ -12,8 +12,6 @@ exercises: 2
 
 ::::::::::::::::::::::::::::::::::::: objectives
 
-- To classify Pip, Renv, Conda, Spack, and Nix/Flox as binary/from-source and single-version/multiple-version
-- To be able to use Conda, Spack, and Nix/Flox to package new projects reproducibly
-- To be able to use Conda, Spack, and Nix/Flox to install existing projects reproducibly
+- TODO
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
