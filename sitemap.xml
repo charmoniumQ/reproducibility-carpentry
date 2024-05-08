@@ -16,6 +16,9 @@
     <loc>https://charmoniumQ.github.io/reproducibility-carpentry/containerization_and_virtualization.html</loc>
   </url>
   <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/environment_specifications.html</loc>
+  </url>
+  <url>
     <loc>https://charmoniumQ.github.io/reproducibility-carpentry/images.html</loc>
   </url>
   <url>
@@ -37,6 +40,9 @@
     <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/containerization_and_virtualization.html</loc>
   </url>
   <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/environment_specifications.html</loc>
+  </url>
+  <url>
     <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/images.html</loc>
   </url>
   <url>
@@ -55,6 +61,9 @@
     <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/package_management.html</loc>
   </url>
   <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/package_management_theory.html</loc>
+  </url>
+  <url>
     <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/package_managers_in_practice.html</loc>
   </url>
   <url>
@@ -65,6 +74,9 @@
   </url>
   <url>
     <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/reproducibility_definition.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/reproducible_software_environments.html</loc>
   </url>
   <url>
     <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor-notes.html</loc>
@@ -79,6 +91,9 @@
     <loc>https://charmoniumQ.github.io/reproducibility-carpentry/package_management.html</loc>
   </url>
   <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/package_management_theory.html</loc>
+  </url>
+  <url>
     <loc>https://charmoniumQ.github.io/reproducibility-carpentry/package_managers_in_practice.html</loc>
   </url>
   <url>
@@ -89,5 +104,8 @@
   </url>
   <url>
     <loc>https://charmoniumQ.github.io/reproducibility-carpentry/reproducibility_definition.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/reproducible_software_environments.html</loc>
   </url>
 </urlset>

@@ -60,9 +60,10 @@ contact: 'sam@samgrayson.me'
 # Order of episodes in your lesson
 episodes: 
 - reproducibility_definition.Rmd
-- package_management.Rmd
+- package_management_theory.Rmd
+- environment_specifications.Rmd
 - containerization_and_virtualization.Rmd
-- package_managers_in_practice.Rmd
+- reproducible_software_environments.Rmd
 
 # Information for Learners
 learners: 
