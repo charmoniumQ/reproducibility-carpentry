@@ -50,7 +50,7 @@ In that case, we have to "backtrack" even further and select a new candidate for
 A itself may have been the downstream package of another diamond dependency, so we may have to backtrack on those candidates, and so on.
 
 In general, dependency constraint solving is NP-complete^[For a formal proof, see [Dependency Solving: a Separate Concern in Component Evolution Management by Abate et al. in the Journal of Systems and Software 2012](https://www.sciencedirect.com/science/article/abs/pii/S0164121212000477); for an informal proof, see [Version SAT by Cox on their blog 2016](https://research.swtch.com/version-sat)] due to the necessity of backtracking in diamond dependencies.
-Oversimplify the details, NP-completeness means the runtime of the fastest known^[If P ≠ NP, then "fastest known" can be replaced with "fastest possible". Computer scientists have been looking for fast algorithms to NP-complete problems for decades; so far no luck. 88% of researchers polled (informally) to respond that P ≠ NP (see [Guest Column: The Third P =? NP Poll by Gasarch in SIGACT News Complexity Theory Column 100 (2019)](https://www.cs.umd.edu/users/gasarch/BLOGPAPERS/pollpaper3.pdf)).] algorithm scales exponentially^[Mathematically astute readers will note this should read "[super-polynomial](https://en.wikipedia.org/wiki/Time_complexity#Superpolynomial_time)" not "exponential", but I did promise to oversimplify the details for a general audience.] with the input.
+Oversimplify the details, NP-completeness means the runtime of the fastest known^[If P ≠ NP, then "fastest known" can be replaced with "fastest possible". Computer scientists have been looking for fast algorithms to NP-complete problems for decades; so far no luck. 88% of researchers polled (informally) to respond that P ≠ NP (see [Guest Column: The Third P =? NP Poll by Gasarch in SIGACT News Complexity Theory Column 100 (2019)](https://www.cs.umd.edu/users/gasarch/BLOGPAPERS/pollpaper3.pdf)).] algorithm scales exponentially^[Mathematically astute readers will note this should read "[super-polynomial](https://en.wikipedia.org/wiki/Time_complexity#Superpolynomial_time)" not "exponential", but I did promise to "oversimplify the details" for a general audience.] with the input.
 
 Dependency constraint solving is often implemented as a call to an external [boolean satisfiability (SAT) solver](https://www.wikiwand.com/en/SAT_solver)).
 Since they are used in many problems, SAT solvers have been optimized for decades; their runtime is still exponential but a lesser exponential than home-built solutions.
@@ -89,18 +89,25 @@ Therefore, some package managers avoid the package version resolution altogether
   We don't know of any package managers that exploit this to avoid NP-complete dependency constraint solving, but it is an interesting direction.
   We discuss difficulties in using semver later. <!-- TODO link -->
 
+- When Maven encounters a diamond dependency, the package closer to the root (of B or C) gets to have its preferred version of D and the other constraint gets ignored^[See "dependency mediation" in [Introduction to the Dependency Mechanism in Maven's documentation](https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html)].
+  The user often specifies the exact version of D themselves to ensure correctness.
+
 Package managers that use dependency solvers include Pip [after 20.3](https://pip.pypa.io/en/stable/topics/dependency-resolution/#backtracking), Conda, Mamba, Spack.
 
 DNF, YUM, and APT technically do dependency solving, but their package repositories often have just one version of a package dependency.
 Usually, only a handful of repositories are enabled.
 
-Nix, Guix, and Pacman do not do dependency solving.
+Nix, Guix, Pacman, Maven, and Pip before 20.3 do not do dependency solving.
 Their repository offers a single version of every package.
 However, users can easily override that package to use a different version (see user-defined packages).
 
 # From-source or binary
 
+Software can be installed by downloading pre-built executables include the target environment or {downloading source code and building those executables} in the target environment.
+
 Correlates with user-defined packages
+
+Bootstrapping and TCB
 
 # Environment or whole-system
 

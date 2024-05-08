@@ -64,6 +64,7 @@ episodes:
 - environment_specifications.Rmd
 - containerization_and_virtualization.Rmd
 - reproducible_software_environments.Rmd
+- engineering_reproducible_software.Rmd
 
 # Information for Learners
 learners: 

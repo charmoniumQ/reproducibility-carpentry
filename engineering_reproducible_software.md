@@ -1,5 +1,5 @@
 ---
-title: "Engineering Reproducible Software"
+title: "Package managers in practice"
 teaching: 10
 exercises: 2
 ---
