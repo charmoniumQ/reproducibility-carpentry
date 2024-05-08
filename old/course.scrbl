@@ -31,35 +31,14 @@
 
   @section["What is \"reproducibility\"?"]{
 
-    @section{
-      @blockquote{
-        @{newterm}["Reproducibility"]{
-          the ability to obtain a measurement with stated precision by a different team using the same measurement procedure, the same measuring system, under the same operating conditions, in the same or a different location on multiple trials
-        }
-        @source{acminc.staffArtifactReviewBadging2020}
-      }
-
-      Definition comes from metrology ("science of measuring things"), not software-specific.
-      We will specialize "measurement", "procedure", "operating conditions" in software context
-    }
 
     @section["Procedure (for software)"]{
-      Abstractly: user-interactions required to run the program
-
-      Often, a list of CLI commands, response to prompts (if any), and input data
-
       @question["Should what the user clicks on while the program is running be considered the procedure?" "Yes"]
 
       While most programs @emph{should} work for an infinite set of inputs, reproducibility refers to their behavior on just a specific input, perhaps a specific input of scientific interest.
     }
 
     @section["Measurement (for software)"]{
-      @itemlist{
-        @item["Error-freedom (program produces result without crashing)"]{easy to assess, but too lenient}
-        @item["Bitwise equivalence (outputs same bits)"]{easy to assess, but too strict}
-        @item["Statistical equivalence (overlapping confidence intervals, etc.)"]{hard to assess (need domain knowledge), but scientifically meaningful}
-        @item["Others"]{domain-specific definitions}
-      }
       @question[
         @string{
           What is the relationship between these different measurements? Does acheiveing reproducibility on one of the above measurements guarantee reproducibility on any other?}
