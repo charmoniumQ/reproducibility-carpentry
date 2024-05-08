@@ -234,7 +234,19 @@
 <div class="accordion accordion-flush" id="accordionFlush6">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading6">
-        <a href="reproducible_software_environments.html">5. Package managers in practice</a>
+        <a href="reproducible_software_environments.html">5. Engineering Reproducible Software</a>
+    </div>
+<!--/div.accordion-header-->
+        
+  </div>
+<!--/div.accordion-item-->
+</div>
+<!--/div.accordion-flush-->
+
+<div class="accordion accordion-flush" id="accordionFlush7">
+  <div class="accordion-item">
+    <div class="accordion-header" id="flush-heading7">
+        <a href="engineering_reproducible_software.html">6. Package managers in practice</a>
     </div>
 <!--/div.accordion-header-->
         
@@ -740,21 +752,29 @@ constraints of the form “greater than x.y.z but less than (x+1).0.0”<a href=
 know of any package managers that exploit this to avoid NP-complete
 dependency constraint solving, but it is an interesting direction. We
 discuss difficulties in using semver later. <!-- TODO link --></p></li>
+<li><p>When Maven encounters a diamond dependency, the package closer to
+the root (of B or C) gets to have its preferred version of D and the
+other constraint gets ignored<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>. The user often specifies the exact version
+of D themselves to ensure correctness.</p></li>
 </ul>
 <p>Package managers that use dependency solvers include Pip <a href="https://pip.pypa.io/en/stable/topics/dependency-resolution/#backtracking" class="external-link">after
 20.3</a>, Conda, Mamba, Spack.</p>
 <p>DNF, YUM, and APT technically do dependency solving, but their
 package repositories often have just one version of a package
 dependency. Usually, only a handful of repositories are enabled.</p>
-<p>Nix, Guix, and Pacman do not do dependency solving. Their repository
-offers a single version of every package. However, users can easily
-override that package to use a different version (see user-defined
-packages).</p>
+<p>Nix, Guix, Pacman, Maven, and Pip before 20.3 do not do dependency
+solving. Their repository offers a single version of every package.
+However, users can easily override that package to use a different
+version (see user-defined packages).</p>
 </div>
 <div class="section level1">
 <h1 id="from-source-or-binary">From-source or binary<a class="anchor" aria-label="anchor" href="#from-source-or-binary"></a>
 </h1>
+<p>Software can be installed by downloading pre-built executables
+include the target environment or {downloading source code and building
+those executables} in the target environment.</p>
 <p>Correlates with user-defined packages</p>
+<p>Bootstrapping and TCB</p>
 </div>
 <div class="section level1">
 <h1 id="environment-or-whole-system">Environment or whole-system<a class="anchor" aria-label="anchor" href="#environment-or-whole-system"></a>
@@ -800,7 +820,7 @@ Column: The Third P =? NP Poll by Gasarch in SIGACT News Complexity
 Theory Column 100 (2019)</a>).<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
 <li id="fn5"><p>Mathematically astute readers will note this should read
 “<a href="https://en.wikipedia.org/wiki/Time_complexity#Superpolynomial_time" class="external-link">super-polynomial</a>”
-not “exponential”, but I did promise to oversimplify the details for a
+not “exponential”, but I did promise to “oversimplify the details” for a
 general audience.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
 <li id="fn6"><p>See <a href="https://nodejs.org/en/blog/npm/peer-dependencies" class="external-link">Peer
 Dependencies by Denicola on NodeJS blog</a> and <a href="https://lexi-lambda.github.io/blog/2016/08/24/understanding-the-npm-dependency-model/" class="external-link">Understanding
@@ -809,6 +829,8 @@ the npm dependency model by King on their blog 2016</a><a href="#fnref6" class="
 in Nixpkgs Manual</a><a href="#fnref7" class="footnote-back">↩︎</a></p></li>
 <li id="fn8"><p>See “Alternatives?” <a href="https://research.swtch.com/version-sat" class="external-link">Version SAT by Cox on
 their blog 2016</a><a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p>See “dependency mediation” in <a href="https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html" class="external-link">Introduction
+to the Dependency Mechanism in Maven’s documentation</a><a href="#fnref9" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div></section><section id="aio-environment_specifications"><p>Content from <a href="environment_specifications.html">Environment specifications</a></p>
 <hr>
@@ -929,7 +951,7 @@ reproducibility</li>
 </div>
 </div>
 </div>
-</div></section><section id="aio-reproducible_software_environments"><p>Content from <a href="reproducible_software_environments.html">Package managers in practice</a></p>
+</div></section><section id="aio-reproducible_software_environments"><p>Content from <a href="reproducible_software_environments.html">Engineering Reproducible Software</a></p>
 <hr>
 <p>Last updated on 2024-05-08 |
         
@@ -956,12 +978,40 @@ reproducibility</li>
 <div class="inner bordered">
 <h3 class="card-title">Objectives</h3>
 <ul>
-<li>To classify Pip, Renv, Conda, Spack, and Nix/Flox as
-binary/from-source and single-version/multiple-version</li>
-<li>To be able to use Conda, Spack, and Nix/Flox to package new projects
-reproducibly</li>
-<li>To be able to use Conda, Spack, and Nix/Flox to install existing
-projects reproducibly</li>
+<li>TODO</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div></section><section id="aio-engineering_reproducible_software"><p>Content from <a href="engineering_reproducible_software.html">Package managers in practice</a></p>
+<hr>
+<p>Last updated on 2024-05-08 |
+        
+        <a href="https://github.com/charmoniumQ/reproducibility-carpentry/edit/main/episodes/engineering_reproducible_software.Rmd" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
+<p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 12 minutes</p>
+<div class="text-end">
+          <button role="button" aria-pressed="false" tabindex="0" id="expand-code" class="pull-right" data-expand="Expand All Solutions " data-collapse="Collapse All Solutions "> Expand All Solutions <i aria-hidden="true" data-feather="plus"></i></button>
+        </div>
+<div class="overview card">
+<h2 class="card-header">Overview</h2>
+<div class="row g-0">
+<div class="col-md-4">
+<div class="card-body">
+<div class="inner">
+<h3 class="card-title">Questions</h3>
+<ul>
+<li>TODO</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="col-md-8">
+<div class="card-body">
+<div class="inner bordered">
+<h3 class="card-title">Objectives</h3>
+<ul>
+<li>TODO</li>
 </ul>
 </div>
 </div>
