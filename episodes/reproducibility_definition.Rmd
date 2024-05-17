@@ -21,9 +21,7 @@ exercises: 2
 
 # Definitions
 
-**Reproducibility**[^acm]: The ability to obtain a measurement with stated precision by a different team using the same measurement procedure, the same measuring system, under the same operating conditions, in the same or a different location on multiple trials.
-
-[^acm]: See [Artifact Review and Badging 1.1](https://www.acm.org/publications/policies/artifact-review-and-badging-current)
+**Reproducibility** [according to the ACM](https://www.acm.org/publications/policies/artifact-review-and-badging-current) means: the ability to obtain a measurement with stated precision by a different team using the same measurement procedure, the same measuring system, under the same operating conditions, in the same or a different location on multiple trials.
 
 This definition derives from _metrology_, the science of measuring, and we will specialize some of the terms "measurement", "measurement procedure", and "operating conditions" in software context for computational science experiments (from here on, **CSEs**).
 
@@ -36,16 +34,11 @@ For every CSE, there are probably some operating conditions in which it is the m
 To make our definition not vacuous, "reproducibility" will require all relevant operating conditions have to be documented (e.g., "README.md states you must have GCC 12 in `/usr/bin/gcc`").
 Operating conditions can be eliminated by moving them to the measurement procedure (e.g., the program itself contains a copy of GCC 12).
 For the purposes of this lesson, the operating conditions are the "manual" steps that the user has to take in order to use the measurement procedure to make the measurement.
-Irrelevant operating conditions may be specified without changing the reproducibility status (e.g., we might say we require GCC 12, but really GCC 13 would work); it is quite difficult and often not necessary to know the minimal set of operating conditions.
+One may over-specify operating conditions without changing the reproducibility status (e.g., one might say their software requires GCC 12, but really GCC 13 would work); it is quite difficult and often not necessary to know the minimal set of operating conditions, so in practice, we usually have an larger-than-necessary set of operating conditions.
 
 Often in UNIX-like systems, the only relevant conditions are certain objects be on certain "load paths", specified by environment variables.
 E.g., have Python 3.11 in `$PATH`, have Numpy 1.26 in `$PYTHONPATH`, and have a BLAS library in `$LIBRARY_PATH`.
 In such cases, it doesn't matter where those programs are on disk; the only relevant "operating condition" is that the environment variables are set to point to those programs at a compatible version.
-
-<!--
-TODO:
-Since there are so many possible operating conditions, we may not know which are required; we may not know if every version of this library will lead to a valid reproduction or not.
--->
 
 **Measurement (for CSEs)**:
 
@@ -67,13 +60,13 @@ In general, it is difficult to find a measurement that is both easy to assess an
 We explicitly define reproducibility because not everyone uses the ACM definition.
 [Reproducible Builds](https://reproducible-builds.org/docs/definition/) and [Google's Building Secure and Reliable Systems](https://google.github.io/building-secure-and-reliable-systems/raw/ch14.html#hermeticcomma_reproduciblecomma_or_veri) uses bit-wise equivalence only.
 Operating on different definitions without realizing it leads to [disagreements](https://linderud.dev/blog/nixos-is-not-reproducible/).
-We believe defining reproducibility with respect to a measurement and operating conditions is more useful; we can refer to different kinds and degrees of reproducibility in different conditions.
+Defining reproducibility with respect to a measurement and operating conditions is more useful; one can refer to different kinds and degrees of reproducibility in different conditions.
 
 **Composition of measurement procedures**: The outcome of one measurement may be the input to another measurement procedure.
 This can happen in CSEs as well as in physical experiments.
-In physical experiments, we may use a device to calibrate (measure) some other device, and use that other device to measure some scientific phenomenon.
+In physical experiments, one may use a device to calibrate (measure) some other device, and use that other device to measure some scientific phenomenon.
 Likewise, In CSE, the output of compilation may be used as the input to another CSE.
-We can measure a number of relevant properties of the result of a software compilation.
+One can measure a number of relevant properties of the result of a software compilation.
 
 | Compilation measurement            | Definition                                                       |
 |------------------------------------|------------------------------------------------------------------|
@@ -81,7 +74,7 @@ We can measure a number of relevant properties of the result of a software compi
 | Behavioral equivalence             | The resulting binary has the same behavior as some other one     |
 | Bit-wise equivalence               | As before, the binary is exactly the same as some other one      |
 
-E.g., suppose we run `gcc main.c` on two systems and one system uses a different version of `unistd.h`, which is `#included` by `main.c`.
+E.g., suppose one runs `gcc main.c` on two systems and one system uses a different version of `unistd.h`, which is `#included` by `main.c`.
 The process (running `gcc main.c`) does not reproduce source-equivalent binaries, but it might reproduce behavior-equivalent binaries or bit-wise equivalent binaries (depending on how different `unistd.h`).
 
 # Related terms
@@ -114,7 +107,7 @@ Workflows are not necessary for reproducibility, so long as the relevant measure
 Systems that facilitating literate programming (from here on, **literate programming systems**) often also permit the user to execute snippets of their code and embed the result automatically in a report.
 Programs written in literate programming systems with cell execution used in data science are sometimes called "notebooks", due to their resemblance to a lab notebook.
 [Jupyter](https://jupyter.org/), [Knitr](https://yihui.org/knitr/), and [Quarto](https://quarto.org/) are examples of literate programming system with cell execution.
-These are often discussed in the context of reproducibility^[See [Interactive notebooks: Sharing the code by Shen in Nature 2014](https://www.nature.com/articles/515151a), [Why Jupyter is... by Perkel in Nature Toolbox 2018](https://www.nature.com/articles/d41586-018-07196-1), [knitr: A Comprehensive Tool for Reproducible Research in R (book) by Xie 2014](1https://www.taylorfrancis.com/chapters/edit/10.1201/9781315373461-1/knitr-comprehensive-tool-reproducible-research-yihui-xie), [Implementing Reproducible Research (book) edited by Stodden et al. 2014](https://www.taylorfrancis.com/books/edit/10.1201/9781315373461/implementing-reproducible-research-friedrich-leisch-roger-peng-victoria-stodden), [Reproducible Research Workflow in R... by Callahan et al. in Biocomputing 2016](https://www.worldscientific.com/doi/abs/10.1142/9789814749411_0018)].
+These are often discussed in the context of reproducibility (See [1](https://doi.org/10.1038/515151a), [2](https://doi.org/10.1038/d41586-018-07196-1), [3](https://www.taylorfrancis.com/chapters/edit/10.1201/9781315373461-1/knitr-comprehensive-tool-reproducible-research-yihui-xie), [4](https://doi.org/10.1201/9781315373461 ), [5](https://doi.org/10.1142/9789814749411_0018)).
 Like workflows, notebooks automate procedures that may otherwise be manual (thereby documenting them for others); they can even contain the output of the code, so one can verify if their result is the similar to the authors.
 Also like workflows, notebooks are not sufficient by themselves for reproducibility, although they can be a valuable part of a reproducible artifact; there are often necessary operating conditions (must have Numpy version 1.26; must have `data.csv`) that are documented outside of the notebook or not documented at all.
 Since notebooks support cell-execution triggered by a UI element, the cells can be executed in a manual order, which becomes an undocumented part of the measurement procedure.
