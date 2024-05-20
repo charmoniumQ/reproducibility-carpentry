@@ -34,28 +34,37 @@ jobs:
       - name: "Checkout Lesson"
         uses: actions/checkout@v3
 
-      - name: "Set up R"
-        uses: r-lib/actions/setup-r@v2
-        with:
-          use-public-rspm: true
-          install-r: false
+      # - name: "Set up R"
+      #   uses: r-lib/actions/setup-r@v2
+      #   with:
+      #     use-public-rspm: true
+      #     install-r: false
 
-      - name: "Set up Pandoc"
-        uses: r-lib/actions/setup-pandoc@v2
+      # - name: "Set up Pandoc"
+      #   uses: r-lib/actions/setup-pandoc@v2
 
-      - name: "Setup Lesson Engine"
-        uses: carpentries/actions/setup-sandpaper@main
-        with:
-          cache-version: ${{ secrets.CACHE_VERSION }}
+      # - name: "Setup Lesson Engine"
+      #   uses: carpentries/actions/setup-sandpaper@main
+      #   with:
+      #     cache-version: ${{ secrets.CACHE_VERSION }}
 
-      - name: "Setup Package Cache"
-        uses: carpentries/actions/setup-lesson-deps@main
-        with:
-          cache-version: ${{ secrets.CACHE_VERSION }}
+      # - name: "Setup Package Cache"
+      #   uses: carpentries/actions/setup-lesson-deps@main
+      #   with:
+      #     cache-version: ${{ secrets.CACHE_VERSION }}
+
+      # Too bad this doesn't work:
+	    # https://github.com/charmoniumQ/reproducibility-carpentry/actions/runs/9132152331/job/25112870920
+      # https://github.com/vubiostat/r-yaml/issues/143
+
+      - name: "Install Nix"
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
 
       - name: "Deploy Site"
         run: |
+          cat | nix develop --command Rscript <<EOF
           reset <- "${{ github.event.inputs.reset }}" == "true"
           sandpaper::package_cache_trigger(TRUE)
           sandpaper:::ci_deploy(reset = reset)
-        shell: Rscript {0}
+          EOF
