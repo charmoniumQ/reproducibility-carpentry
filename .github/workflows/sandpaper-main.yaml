@@ -54,7 +54,7 @@ jobs:
       #     cache-version: ${{ secrets.CACHE_VERSION }}
 
       # Too bad this doesn't work:
-	    # https://github.com/charmoniumQ/reproducibility-carpentry/actions/runs/9132152331/job/25112870920
+      # https://github.com/charmoniumQ/reproducibility-carpentry/actions/runs/9132152331/job/25112870920
       # https://github.com/vubiostat/r-yaml/issues/143
 
       - name: "Install Nix"
