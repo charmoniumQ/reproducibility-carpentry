@@ -310,7 +310,7 @@
         
 <section id="aio-reproducibility_definition"><p>Content from <a href="reproducibility_definition.html">Reproducibility definition</a></p>
 <hr>
-<p>Last updated on 2024-05-08 |
+<p>Last updated on 2024-05-21 |
         
         <a href="https://github.com/charmoniumQ/reproducibility-carpentry/edit/main/episodes/reproducibility_definition.Rmd" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <div class="text-end">
@@ -350,10 +350,11 @@ know of.</li>
 <div class="section level1">
 <h1 id="definitions">Definitions<a class="anchor" aria-label="anchor" href="#definitions"></a>
 </h1>
-<p><strong>Reproducibility</strong><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>: The ability to obtain a measurement with
-stated precision by a different team using the same measurement
-procedure, the same measuring system, under the same operating
-conditions, in the same or a different location on multiple trials.</p>
+<p><strong>Reproducibility</strong> <a href="https://www.acm.org/publications/policies/artifact-review-and-badging-current" class="external-link">according
+to the ACM</a> means: the ability to obtain a measurement with stated
+precision by a different team using the same measurement procedure, the
+same measuring system, under the same operating conditions, in the same
+or a different location on multiple trials.</p>
 <p>This definition derives from <em>metrology</em>, the science of
 measuring, and we will specialize some of the terms “measurement”,
 “measurement procedure”, and “operating conditions” in software context
@@ -374,11 +375,12 @@ be documented (e.g., “README.md states you must have GCC 12 in
 moving them to the measurement procedure (e.g., the program itself
 contains a copy of GCC 12). For the purposes of this lesson, the
 operating conditions are the “manual” steps that the user has to take in
-order to use the measurement procedure to make the measurement.
-Irrelevant operating conditions may be specified without changing the
-reproducibility status (e.g., we might say we require GCC 12, but really
+order to use the measurement procedure to make the measurement. One may
+over-specify operating conditions without changing the reproducibility
+status (e.g., one might say their software requires GCC 12, but really
 GCC 13 would work); it is quite difficult and often not necessary to
-know the minimal set of operating conditions.</p>
+know the minimal set of operating conditions, so in practice, we usually
+have an larger-than-necessary set of operating conditions.</p>
 <p>Often in UNIX-like systems, the only relevant conditions are certain
 objects be on certain “load paths”, specified by environment variables.
 E.g., have Python 3.11 in <code>$PATH</code>, have Numpy 1.26 in
@@ -387,10 +389,6 @@ E.g., have Python 3.11 in <code>$PATH</code>, have Numpy 1.26 in
 programs are on disk; the only relevant “operating condition” is that
 the environment variables are set to point to those programs at a
 compatible version.</p>
-<!--
-TODO:
-Since there are so many possible operating conditions, we may not know which are required; we may not know if every version of this library will lead to a valid reproduction or not.
--->
 <p><strong>Measurement (for CSEs)</strong>:</p>
 <ul>
 <li>Crash-freedom: program produces result without crashing.</li>
@@ -442,16 +440,16 @@ ACM definition. <a href="https://reproducible-builds.org/docs/definition/" class
 Builds</a> and <a href="https://google.github.io/building-secure-and-reliable-systems/raw/ch14.html#hermeticcomma_reproduciblecomma_or_veri" class="external-link">Google’s
 Building Secure and Reliable Systems</a> uses bit-wise equivalence only.
 Operating on different definitions without realizing it leads to <a href="https://linderud.dev/blog/nixos-is-not-reproducible/" class="external-link">disagreements</a>.
-We believe defining reproducibility with respect to a measurement and
-operating conditions is more useful; we can refer to different kinds and
-degrees of reproducibility in different conditions.</p>
+Defining reproducibility with respect to a measurement and operating
+conditions is more useful; one can refer to different kinds and degrees
+of reproducibility in different conditions.</p>
 <p><strong>Composition of measurement procedures</strong>: The outcome
 of one measurement may be the input to another measurement procedure.
 This can happen in CSEs as well as in physical experiments. In physical
-experiments, we may use a device to calibrate (measure) some other
+experiments, one may use a device to calibrate (measure) some other
 device, and use that other device to measure some scientific phenomenon.
 Likewise, In CSE, the output of compilation may be used as the input to
-another CSE. We can measure a number of relevant properties of the
+another CSE. One can measure a number of relevant properties of the
 result of a software compilation.</p>
 <table class="table">
 <colgroup>
@@ -477,7 +475,7 @@ result of a software compilation.</p>
 </tr>
 </tbody>
 </table>
-<p>E.g., suppose we run <code>gcc main.c</code> on two systems and one
+<p>E.g., suppose one runs <code>gcc main.c</code> on two systems and one
 system uses a different version of <code>unistd.h</code>, which is
 <code>#included</code> by <code>main.c</code>. The process (running
 <code>gcc main.c</code>) does not reproduce source-equivalent binaries,
@@ -536,7 +534,7 @@ examine repeatability and reproducibility instead.</p>
 <p><strong>Computational provenance</strong> is a record of the process
 by which a particular computational artifact was generated
 (<strong>retrospective</strong>) or could potentially be generated
-(<strong>prospective</strong>)<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. Provenance of a final artifact may include
+(<strong>prospective</strong>)<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. Provenance of a final artifact may include
 the provenance of the artifacts used by the final process, and so on,
 the artifacts used to generate the artifacts used to generate (and so
 on…) the final artifact.</p>
@@ -561,7 +559,7 @@ procedure is otherwise documented or automated, and they are sufficient
 only when the workflow language is sufficiently detailed (i.e., detailed
 enough to capture all of the relevant operating conditions).</p>
 <p><strong>Literate programming</strong> is a medium where a program’s
-source code is embedded in an explanation of how it works<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. Systems that
+source code is embedded in an explanation of how it works<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. Systems that
 facilitating literate programming (from here on, <strong>literate
 programming systems</strong>) often also permit the user to execute
 snippets of their code and embed the result automatically in a report.
@@ -569,17 +567,19 @@ Programs written in literate programming systems with cell execution
 used in data science are sometimes called “notebooks”, due to their
 resemblance to a lab notebook. <a href="https://jupyter.org/" class="external-link">Jupyter</a>, <a href="https://yihui.org/knitr/" class="external-link">Knitr</a>, and <a href="https://quarto.org/" class="external-link">Quarto</a> are examples of literate
 programming system with cell execution. These are often discussed in the
-context of reproducibility<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. Like workflows, notebooks automate
-procedures that may otherwise be manual (thereby documenting them for
-others); they can even contain the output of the code, so one can verify
-if their result is the similar to the authors. Also like workflows,
-notebooks are not sufficient by themselves for reproducibility, although
-they can be a valuable part of a reproducible artifact; there are often
-necessary operating conditions (must have Numpy version 1.26; must have
-<code>data.csv</code>) that are documented outside of the notebook or
-not documented at all. Since notebooks support cell-execution triggered
-by a UI element, the cells can be executed in a manual order, which
-becomes an undocumented part of the measurement procedure.</p>
+context of reproducibility (See <a href="https://doi.org/10.1038/515151a" class="external-link">1</a>, <a href="https://doi.org/10.1038/d41586-018-07196-1" class="external-link">2</a>, <a href="https://www.taylorfrancis.com/chapters/edit/10.1201/9781315373461-1/knitr-comprehensive-tool-reproducible-research-yihui-xie" class="external-link">3</a>,
+<a href="https://doi.org/10.1201/9781315373461" class="external-link">4</a>, <a href="https://doi.org/10.1142/9789814749411_0018" class="external-link">5</a>). Like
+workflows, notebooks automate procedures that may otherwise be manual
+(thereby documenting them for others); they can even contain the output
+of the code, so one can verify if their result is the similar to the
+authors. Also like workflows, notebooks are not sufficient by themselves
+for reproducibility, although they can be a valuable part of a
+reproducible artifact; there are often necessary operating conditions
+(must have Numpy version 1.26; must have <code>data.csv</code>) that are
+documented outside of the notebook or not documented at all. Since
+notebooks support cell-execution triggered by a UI element, the cells
+can be executed in a manual order, which becomes an undocumented part of
+the measurement procedure.</p>
 <p><strong>Containers and virtual machines (VMs)</strong> are related to
 reproducibility. These will be discussed in depth in a future
 episode.</p>
@@ -594,24 +594,15 @@ any links that you are not going to use.
 <div class="footnotes footnotes-end-of-document">
 <hr>
 <ol>
-<li id="fn1"><p>See <a href="https://www.acm.org/publications/policies/artifact-review-and-badging-current" class="external-link">Artifact
-Review and Badging 1.1</a><a href="#fnref1" class="footnote-back">↩︎</a></p></li>
-<li id="fn2"><p>See <a href="https://collections.lib.utah.edu/dl_files/50/a0/50a096638d7465e69a5ba0151da9a71918ecfd50.pdf" class="external-link">Provenance
+<li id="fn1"><p>See <a href="https://collections.lib.utah.edu/dl_files/50/a0/50a096638d7465e69a5ba0151da9a71918ecfd50.pdf" class="external-link">Provenance
 for Computational Tasks: A Survey by Friere et al. in Computing in
-Science &amp; Engineering 2008</a><a href="#fnref2" class="footnote-back">↩︎</a></p></li>
-<li id="fn3"><p>See <a href="https://doi.org/10.1093/comjnl/27.2.97" class="external-link">Literate Programming by
-Knuth in The Computer Journal 1984</a><a href="#fnref3" class="footnote-back">↩︎</a></p></li>
-<li id="fn4"><p>See <a href="https://www.nature.com/articles/515151a" class="external-link">Interactive notebooks:
-Sharing the code by Shen in Nature 2014</a>, <a href="https://www.nature.com/articles/d41586-018-07196-1" class="external-link">Why Jupyter
-is… by Perkel in Nature Toolbox 2018</a>, <a href="1https://www.taylorfrancis.com/chapters/edit/10.1201/9781315373461-1/knitr-comprehensive-tool-reproducible-research-yihui-xie" class="external-link">knitr:
-A Comprehensive Tool for Reproducible Research in R (book) by Xie
-2014</a>, <a href="https://www.taylorfrancis.com/books/edit/10.1201/9781315373461/implementing-reproducible-research-friedrich-leisch-roger-peng-victoria-stodden" class="external-link">Implementing
-Reproducible Research (book) edited by Stodden et al. 2014</a>, <a href="https://www.worldscientific.com/doi/abs/10.1142/9789814749411_0018" class="external-link">Reproducible
-Research Workflow in R… by Callahan et al. in Biocomputing 2016</a><a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+Science &amp; Engineering 2008</a><a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>See <a href="https://doi.org/10.1093/comjnl/27.2.97" class="external-link">Literate Programming by
+Knuth in The Computer Journal 1984</a><a href="#fnref2" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div></section><section id="aio-package_management_theory"><p>Content from <a href="package_management_theory.html">Package management theory</a></p>
 <hr>
-<p>Last updated on 2024-05-08 |
+<p>Last updated on 2024-05-21 |
         
         <a href="https://github.com/charmoniumQ/reproducibility-carpentry/edit/main/episodes/package_management_theory.Rmd" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <div class="text-end">
@@ -646,22 +637,130 @@ single-coherent-set vs SAT-solving</li>
 </div>
 </div>
 </div>
+<p>A <strong>package manager</strong> is a program that manages
+(installs, upgrades, removes) a given target software and the target’s
+software dependencies.</p>
 <p>There are several distinguishing features of package managers: 1.
-whether they attempt to solve dependency constraints or not 2. whether
-they install packages by compiling the packages from source or by
-downloading a binary file 3. whether they operate on an environment or
-whole-system 4. how easily do they permit user-defined packages</p>
+whether they install packages by compiling the packages from source or
+downloading binary files 2. whether they attempt to solve dependency 3.
+whether they operate on a local or system-wide environment</p>
+<div class="section level1">
+<h1 id="from-source-or-binary">From-source or binary<a class="anchor" aria-label="anchor" href="#from-source-or-binary"></a>
+</h1>
+<p><strong>Binary package managers</strong> install software by
+downloading pre-compiled files and placing them in certain paths.</p>
+<p><strong>From-source package managers</strong> install software
+primarily by downloading source code, compiling it, and placing it in
+certain paths. However, from-source package managers may optionally use
+a binary cache, where they can download a pre-compiled binary; the
+salient difference between from-source with binary cache package
+managers and binary-only package managers is that the former can always
+“fall back” on compiling the source when the binaries when the cache
+can’t be used for an arbitrary reason.</p>
+<p>This design choice influences the following qualities:</p>
+<ul>
+<li><p><strong>Speed</strong>: downloading pre-compiled binaries is
+often faster (assuming the network is fast enough relative to the
+slowness of compilation). However binary caches speed up from-source
+package managers in common cases<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p></li>
+<li><p><strong>Security</strong>: users of binary package managers
+implicitly trust the package repository storage/delivery and the
+compiler stack of the maintainer who compiled the package in the first
+place. However, organizations may audit builds can move trust from the
+maintainer to the auditor (which may be the end-user). From-source
+package managers implicitly trust the package repository
+storage/delivery and compiler stack on the user’s system.</p></li>
+<li><p><strong>Flexibility</strong>: compilation may to include certain
+assumptions about the runtime system (e.g., dynamic library RUNPATH) or
+certain extensions (e.g., <code>--disable-ipv6</code>). Users of binary
+package managers are subject to whatever compile-time options the
+maintainer used. They can alleviate this by offering multiple variants
+of the binary at greater storage cost. From-source package managers make
+it much easier to automatically or manually change compile-time
+options.</p></li>
+<li><p><strong>Infrastructure cost</strong>: binary packages are
+expensive to store. A binary is specific to a CPU instruction-set
+architecture (ISA) (e.g., x86 64-bit and ARMv8-A), operating system
+kernel<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>
+(e.g., Linux, MacOS, and Windows), and version of the software. Each
+package manager has a different binary format, be it DEB for APT, RPM
+for YUM/DNF, Wheels for Pip, etc., so reuse between package managers is
+rare. Meanwhile, the version-controlled source-code is shared by users
+of all CPU ISAs, all OS kernels, all versions<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>, and all from-source
+package managers<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</p></li>
+</ul>
+<p>In my opinion, the most important factor is infrastructure cost.
+<strong>Storing binaries for every ISA, OS, and software version is
+expensive, so nobody does it for free forever.</strong> For example, APT
+depends on volunteers or organizations to host repositories for free but
+not forever; <a href="http://ftp.debian.org/debian/dists/" class="external-link">ftp.debian.org</a> has
+nothing older than Debian 10.x (2019 – expected 2024) at the time of
+writing. Software environments based on Debian 9.x (new in 2017) may not
+be reproducible today. The same problems exist for Ubuntu, Fedora,
+CentOS, and even multi-platform binary package managers like Conda.<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
+<p>See caveats about Docker<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>; I will use it here to demonstrate
+“starting from a clean install and running one command.”</p>
+<pre class="docker"><code>FROM debian:9
+RUN apt-get update
+# At the time of writing, this Dockerfile will fail at this step.</code></pre>
+<p>On the other hand, storing the source code is much less expensive,
+and Software Heritage committed to storing the source code of important
+open-source infrastructure for free for a long time.<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></p>
+<p>Many software projects not only release the source code, they often
+allow users to modify the source code. This makes their software more
+debuggable, repairable, and extensible; if it breaks, users can fix it
+themselves. However, the benefits of open-source are not realized if
+there is more friction in installing from source than installing from
+binary. Users would have to locate the source code, download it, learn
+its build system, find the package manager’s build recipe for it, learn
+the package manager’s packaging system, build the binary package, serve
+the binary from a package repository, add the repository to their
+package managers sources list, and install it. When installing from
+binaries is the common-case, installing from source may become neglected
+and flaky.</p>
+<p>However, the process of compiling software has its own operating
+conditions necessary for equivalent-behavior reproducibility<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a> (e.g.,
+“requires GCC 12”). But who compiles the compiler? The operating
+conditions of the package manager itself can be thought of as a “trusted
+computing base”.</p>
+<p>A <strong>trusted computing base (TCB)</strong> is a term from
+computer security for a small set of software that security analysts
+assume correctly implements a certain contract, which is usually kept
+dead-simple. They develop guarantees of the form “assuming the TCB is
+correct to its TCB contract, this high-level software correctly
+implements this high-level contract”. Package managers think of TCB as a
+small set of software that is “trusted to be reproducible” rather than
+“trusted to be secure”. As in computer security, package managers should
+strive to keep their TCB as easy to reproduce as possible, either by
+making it small or making a good installer that enforces the operating
+conditions. <a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a></p>
+<p>One may try to pre-compile binary packages for all relevant
+platforms, but one simply can’t predict what ISAs their users will have
+in the future. The set of popular ISAs is in constant flux: - <a href="https://en.wikipedia.org/wiki/Itanium" class="external-link">Itanium</a> (2001 – 2021)
+processors are no longer purchasable - <a href="https://www.wikiwand.com/en/SPARC" class="external-link">SPARC</a> (1987 – 2029
+expected) is planned to go that way too - <a href="https://en.wikipedia.org/wiki/Power_ISA" class="external-link">PowerPC</a> (2006) is
+exceedingly rare for desktop consumers at the time of writing - <a href="https://en.wikipedia.org/wiki/X86-64" class="external-link">x86 64-bit</a> (2000) and <a href="https://en.wikipedia.org/wiki/ARM_architecture_family#64/32-bit_architecture" class="external-link">ARMv8-A</a>
+(2011) have soared (for ARM, due to the popularity of the Raspberry Pi
+and Apple M-series), with backwards compatibility for <a href="https://en.wikipedia.org/wiki/ARM_architecture_family#32-bit_architecture" class="external-link">ARMv7-A</a>
+(2007) and <a href="https://en.wikipedia.org/wiki/X86" class="external-link">x86 32-bit</a>
+(1985) - But even the hegemony of x86-64 is not certain, given Intel’s
+proposed <a href="https://en.wikipedia.org/wiki/X86-64" class="external-link">x86S</a>
+(2023).</p>
+<p>For these reasons, I suggest using a from-source package manager for
+long-term reproducibility.</p>
+<p>TODO: table</p>
+</div>
 <div class="section level1">
 <h1 id="dependency-constraint-solving-or-not">Dependency Constraint solving or not<a class="anchor" aria-label="anchor" href="#dependency-constraint-solving-or-not"></a>
 </h1>
 <p>Every package has a <strong>version</strong>, which are ordered in
-sequence<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
+sequence<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>.</p>
 <p>A <strong>dependency constraint</strong> occurs when operating some
-versions of A requires operating B (operate usually means build or run).
-Since the packages have multiple versions, each version of A may depend
-on having one of a set of versions of B. Some versions of A may not
-depend on B at all, but so long as other versions of A do, we consider A
-to have a dependency constraint on B. Usually, dependency constraints
+versions of A requires operating B (operate usually means compile or
+run). Since the packages have multiple versions, each version of A may
+depend on having one of a set of versions of B. Some versions of A may
+not depend on B at all, but so long as other versions of A do, we will
+say A has a dependency constraint on B. Usually, dependency constraints
 map a range of versions of A to a range of versions of B, where a range
 is an upper- and lower-bound, but there can be . E.g., (Numba 0.58
 requires Python at least 3.8 and at most 3.11; Numba 0.55 requires
@@ -669,7 +768,7 @@ Python at least 3.7 and at most 3.10; …). If the dependency constraint
 is violated, operating the package invokes undefined behavior.</p>
 <p>A <strong>Diamond dependency</strong> is a set of packages and
 dependency constraints where A depends on B and C, B and C depend on D,
-and the user wants to install A<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
+and the user wants to install A<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>.</p>
 <!-- TODO: figure -->
 <p>A <strong>consistent set</strong> is a mapping from packages to
 versions, satisfying dependency constraints.</p>
@@ -677,19 +776,19 @@ versions, satisfying dependency constraints.</p>
 finding a consistent set. If the user asks for Python and Numba, package
 version resolution may select Numba==0.58 and Python==3.11.</p>
 <p>Dependency constraint solving for a diamond dependency is
-particularly tricky. If we select a candidate for A (perhaps defaulting
-to the latest), and then select compatible candidates for B and C.
-However, those candidate versions of B and C may require different
-versions of D. We may try different candidates for B and C that are
-compatible with our selected candidate for A, but it is possible none of
-these work. In that case, we have to “backtrack” even further and select
-a new candidate for A. A itself may have been the downstream package of
-another diamond dependency, so we may have to backtrack on those
-candidates, and so on.</p>
-<p>In general, dependency constraint solving is NP-complete<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> due to the
-necessity of backtracking in diamond dependencies. Oversimplify the
-details, NP-completeness means the runtime of the fastest known<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> algorithm
-scales exponentially<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> with the input.</p>
+particularly tricky. If one selects a candidate for A (perhaps
+defaulting to the latest), and then selects compatible candidates for B
+and C. However, those candidate versions of B and C may require
+different versions of D. One may try different candidates for B and C
+that are compatible with our selected candidate for A, but perhaps none
+of these will work. In that case, one has to “backtrack” even further
+and select a new candidate for A. A itself may have been the downstream
+package of another diamond dependency, so one may have to backtrack on
+those candidates, and so on.</p>
+<p>In general, dependency constraint solving is NP-complete<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a> due to
+the necessity of backtracking in diamond dependencies. Oversimplify the
+details, NP-completeness means the runtime of the fastest known<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>
+algorithm scales exponentially<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a> with the input.</p>
 <p>Dependency constraint solving is often implemented as a call to an
 external <a href="https://www.wikiwand.com/en/SAT_solver" class="external-link">boolean
 satisfiability (SAT) solver</a>). Since they are used in many problems,
@@ -709,27 +808,27 @@ meta-channel</a>).</p></li>
 earlier (<a href="https://stackoverflow.com/a/66963979/1078199" class="external-link">reordering Conda
 channels</a>).</p></li>
 <li>
-<p>NodeJS has a notion of “public dependencies” (called “peer
-dependencies” to NodeJS developers) and “private dependencies” (called
-“dependencies” to NodeJS developers). When B and C privately depend on
+<p>NodeJS has a notion of “public dependencies” (called “<a href="https://nodejs.org/en/blog/npm/peer-dependencies" class="external-link">peer
+dependencies</a>” to NodeJS developers) and “private dependencies”
+(called “dependencies” to NodeJS developers). Private dependencies don’t
+need to be consistent with each other, so the more dependencies that can
+be treated as private dependencies rather than public dependencies the
+simpler the dependency graph becomes. When B and C privately depend on
 D, <code>require("D")</code> from B can loads a different version than
-<code>require("D")</code> from C<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>. Private dependencies don’t need to be
-consistent with each other, so the more dependencies that can be treated
-as private dependencies rather than public dependencies the simpler the
-dependency graph becomes. However, if types or global variables from one
-package end up in the public interface of another, it has to be a public
-dependency.</p>
+<code>require("D")</code> from C (see <a href="https://lexi-lambda.github.io/blog/2016/08/24/understanding-the-npm-dependency-model/" class="external-link">Understanding
+the npm dependency model by King on their blog 2016</a>). However, if
+types or global variables from one package end up in the public
+interface of another, it has to be a public dependency.</p>
 <p>Nix can also make dependencies “private” in some cases. If B and C
-require D to be on the <code>$PATH</code>, Nix can replace B with a
-wrapper script that adds a specific version of D to the
-<code>$PATH</code> and executes the underlying B program, and likewise
-for C<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.
-No copy of D needs to be on the global <code>$PATH</code>; the right
-version of D is always put on the <code>$PATH</code> “just in time” for
-execution of B or C, and the version of D for B does not interfere with
-the version of D for C.</p>
+require D to be on the <code>$PATH</code>, Nix can replace B with a <a href="https://nixos.org/manual/nixpkgs/stable/#fun-makeWrapper" class="external-link">wrapper
+script</a> that adds a specific version of D to the <code>$PATH</code>
+and executes the underlying B program, and likewise for C. No copy of D
+needs to be on the global <code>$PATH</code>; the right version of D is
+always put on the <code>$PATH</code> “just in time” for execution of B
+or C, and the version of D for B does not interfere with the version of
+D for C.</p>
 </li>
-<li><p>Package repositories contain very few or only one version of each
+<li><p>Package repositories contain few or only one version of each
 package (APT/apt-get). This reduces the number of candidates to search
 through. However, the community has to ensure that a the repository
 contains a consistent set for every set of packages.</p></li>
@@ -743,49 +842,61 @@ constraints are loose; i.e., the newest version of A will work with any
 new-ish version of B.</p></li>
 <li><p>Only allow a single version of every package from a
 manually-maintained consistent set (e.g., <a href="https://www.stackage.org/" class="external-link">Haskell Stackage</a>).</p></li>
-<li><p>Use semantic versioning (semver) and only permit package
-constraints of the form “greater than x.y.z but less than (x+1).0.0”<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>. We don’t
-know of any package managers that exploit this to avoid NP-complete
-dependency constraint solving, but it is an interesting direction. We
-discuss difficulties in using semver later. <!-- TODO link --></p></li>
-<li><p>When Maven encounters a diamond dependency, the package closer to
-the root (of B or C) gets to have its preferred version of D and the
-other constraint gets ignored<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>. The user often specifies the exact version
-of D themselves to ensure correctness.</p></li>
+<li><p><a href="https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html" class="external-link">When
+Maven encounters a diamond dependency</a>, either B or C, whichever is
+closer to the root, gets its preferred version of D and the other
+constraint gets ignored. The user often specifies the exact version of D
+themselves to ensure correctness.</p></li>
 </ul>
-<p>Package managers that use dependency solvers include Pip <a href="https://pip.pypa.io/en/stable/topics/dependency-resolution/#backtracking" class="external-link">after
-20.3</a>, Conda, Mamba, Spack.</p>
-<p>DNF, YUM, and APT technically do dependency solving, but their
-package repositories often have just one version of a package
-dependency. Usually, only a handful of repositories are enabled.</p>
-<p>Nix, Guix, Pacman, Maven, and Pip before 20.3 do not do dependency
-solving. Their repository offers a single version of every package.
-However, users can easily override that package to use a different
-version (see user-defined packages).</p>
+<p>|——————————————————-|——————————————————————-| | Pkg mgrs with dep
+solv | Pip <a href="https://pip.pypa.io/en/stable/topics/dependency-resolution/#backtracking" class="external-link">&gt;=
+20.3</a>, Conda, Mamba, Spack, 0install | | Pkg mgrs with dep solv,
+limited repos<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a> | DNF, YUM, APT | | Pkg mgrs with no dep
+solv | Nix, Guix, Pacman, Maven, Pip &lt; 20.3 |</p>
 </div>
 <div class="section level1">
-<h1 id="from-source-or-binary">From-source or binary<a class="anchor" aria-label="anchor" href="#from-source-or-binary"></a>
+<h1 id="local-or-system-wide">Local or system-wide<a class="anchor" aria-label="anchor" href="#local-or-system-wide"></a>
 </h1>
-<p>Software can be installed by downloading pre-built executables
-include the target environment or {downloading source code and building
-those executables} in the target environment.</p>
-<p>Correlates with user-defined packages</p>
-<p>Bootstrapping and TCB</p>
-</div>
-<div class="section level1">
-<h1 id="environment-or-whole-system">Environment or whole-system<a class="anchor" aria-label="anchor" href="#environment-or-whole-system"></a>
-</h1>
-<p>Correlates with “requires superuser privileges” vs “unprivileged”</p>
-</div>
-<div class="section level1">
-<h1 id="user-defined-packages">User-defined packages<a class="anchor" aria-label="anchor" href="#user-defined-packages"></a>
-</h1>
+<p>Package managers either install to a local or a system-wide software
+environment.</p>
+<p>System-wide software environment package managers are necessary for
+several reasons:</p>
 <ul>
-<li>Environment specification file can have user packages: Nix,
-Guix</li>
-<li>Can easily create a local repository: Spack, Pacman
-<!-- TODO: more research needed -->, Conda?</li>
+<li><p><strong>Hardcoded paths</strong>: Some software uses hardcoded,
+unchangeable paths to root-owned directories, for example
+<code>/usr/lib</code>. Most software today does not have hardcoded
+paths, and so long as their source code is available and licensed for
+modifications, it isn’t unchangeable. Nevertheless, this issue was more
+important when package managers were designed.<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a></p></li>
+<li><p><strong>System-wide effect</strong>: Some software has
+system-level effects or uses, e.g., the bootloader, the kernel, drivers,
+and login manager are installed using a system-wide package
+manager.</p></li>
+<li><p><strong>Save space</strong>: Historically, disk space was
+expensive, so system administrators (sysadmins) did not want users
+compiling the same package just for themselves. Rather, the sysadmins
+installed one for everyone to a global location upon request.</p></li>
 </ul>
+<p>On the other hand, local environment package managers have the
+following benefits:</p>
+<ul>
+<li><p><strong>Reduce dependency conflicts</strong>: Suppose project A
+have conflicting dependencies with project B (unsatisfiable), but if
+they both have their own local environment, this is no bother. Local
+environments naturally have fewer packages than their system-wide union,
+minimizing the time needed to SAT-solve.</p></li>
+<li><p><strong>Principle of least privilege</strong>: Normal users can
+manage software environments without superuser privilege.</p></li>
+</ul>
+<p>Containers and virtual machines are one way of using system-wide
+package managers in a local-environment.</p>
+</div>
+<div class="section level1">
+<h1 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
+</h1>
+<p>TODO: APT isn’t really snapshottable We suggest using from-source
+package managers. If your application requires specific versions, local
+is better</p>
 <!-- 
 Place links that you need to refer to multiple times across pages here. Delete
 any links that you are not going to use. 
@@ -794,43 +905,62 @@ any links that you are not going to use.
 <div class="footnotes footnotes-end-of-document">
 <hr>
 <ol>
-<li id="fn1"><p>For example, Spack uses <a href="https://github.com/spack/spack/blob/e0c6cca65cd001f1e28beac87318dfb605fab22a/lib/spack/docs/packaging_guide.rst#version-comparison" class="external-link">this
+<li id="fn1"><p>Although this may not always work out in practice; if
+the from-source package manager includes the compiler version and CPU
+family as the package spec (“key” for the cache), as Spack does (for
+valid performance and reproducibility reasons), the cache will often
+miss.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p><a href="https://justine.lol/ape.html" class="external-link">Special hacks</a>
+allow multi-OS binaries, but these hacks are uncommon and fragile.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>If the source-code does not use version-control, it
+could still use <a href="https://en.wikipedia.org/wiki/Delta_encoding" class="external-link">delta
+compression</a> or block-based compression more efficiently than binary
+equivalents.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>Package-manager specific patches may be stored
+separately, this is still much less storage cost than storing
+package-manager specific binaries separately, since the patched source
+are already delta-compressed (only store the patch) and usually small<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>TODO: Find examples for other pkg mgrs and make into a
+details snippet<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>TODO: intra-lesson link<a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>TODO: find their exact commitment<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
+<li id="fn8"><p>TODO: link to last lesson<a href="#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p>TODO: How does Spack compile the compiler? What about
+Nix? What about Guix?<a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>For example, Spack uses <a href="https://github.com/spack/spack/blob/e0c6cca65cd001f1e28beac87318dfb605fab22a/lib/spack/docs/packaging_guide.rst#version-comparison" class="external-link">this
 total order</a>, Java uses <a href="https://docs.oracle.com/javase/9/docs/api/java/lang/module/ModuleDescriptor.Version.html" class="external-link">this
 one</a>, Python uses <a href="https://peps.python.org/pep-0440/" class="external-link">this
 one</a>, Maven uses <a href="https://docs.oracle.com/middleware/1212/core/MAVEN/maven_version.htm" class="external-link">this
-one</a>.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
-<li id="fn2"><p>Note, this can occur with three packages if the user
+one</a>.<a href="#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>Note, this can occur with three packages if the user
 wants to install B and C; in that case we could pretend the user wanted
 to install a “virtual package” A, that depends on B and C, so the
-three-package case is reducible to the four-package case<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
-<li id="fn3"><p>For a formal proof, see <a href="https://www.sciencedirect.com/science/article/abs/pii/S0164121212000477" class="external-link">Dependency
+three-package case is reducible to the four-package case<a href="#fnref11" class="footnote-back">↩︎</a></p></li>
+<li id="fn12"><p>For a formal proof, see <a href="https://www.sciencedirect.com/science/article/abs/pii/S0164121212000477" class="external-link">Dependency
 Solving: a Separate Concern in Component Evolution Management by Abate
 et al. in the Journal of Systems and Software 2012</a>; for an informal
 proof, see <a href="https://research.swtch.com/version-sat" class="external-link">Version SAT
-by Cox on their blog 2016</a><a href="#fnref3" class="footnote-back">↩︎</a></p></li>
-<li id="fn4"><p>If P ≠ NP, then “fastest known” can be replaced with
+by Cox on their blog 2016</a><a href="#fnref12" class="footnote-back">↩︎</a></p></li>
+<li id="fn13"><p>If P ≠ NP, then “fastest known” can be replaced with
 “fastest possible”. Computer scientists have been looking for fast
 algorithms to NP-complete problems for decades; so far no luck. 88% of
 researchers polled (informally) to respond that P ≠ NP (see <a href="https://www.cs.umd.edu/users/gasarch/BLOGPAPERS/pollpaper3.pdf" class="external-link">Guest
 Column: The Third P =? NP Poll by Gasarch in SIGACT News Complexity
-Theory Column 100 (2019)</a>).<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
-<li id="fn5"><p>Mathematically astute readers will note this should read
-“<a href="https://en.wikipedia.org/wiki/Time_complexity#Superpolynomial_time" class="external-link">super-polynomial</a>”
+Theory Column 100 (2019)</a>).<a href="#fnref13" class="footnote-back">↩︎</a></p></li>
+<li id="fn14"><p>Mathematically astute readers will note this should
+read “<a href="https://en.wikipedia.org/wiki/Time_complexity#Superpolynomial_time" class="external-link">super-polynomial</a>”
 not “exponential”, but I did promise to “oversimplify the details” for a
-general audience.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
-<li id="fn6"><p>See <a href="https://nodejs.org/en/blog/npm/peer-dependencies" class="external-link">Peer
-Dependencies by Denicola on NodeJS blog</a> and <a href="https://lexi-lambda.github.io/blog/2016/08/24/understanding-the-npm-dependency-model/" class="external-link">Understanding
-the npm dependency model by King on their blog 2016</a><a href="#fnref6" class="footnote-back">↩︎</a></p></li>
-<li id="fn7"><p>See <a href="https://nixos.org/manual/nixpkgs/stable/#fun-makeWrapper" class="external-link"><code>makeWrapper</code>
-in Nixpkgs Manual</a><a href="#fnref7" class="footnote-back">↩︎</a></p></li>
-<li id="fn8"><p>See “Alternatives?” <a href="https://research.swtch.com/version-sat" class="external-link">Version SAT by Cox on
-their blog 2016</a><a href="#fnref8" class="footnote-back">↩︎</a></p></li>
-<li id="fn9"><p>See “dependency mediation” in <a href="https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html" class="external-link">Introduction
-to the Dependency Mechanism in Maven’s documentation</a><a href="#fnref9" class="footnote-back">↩︎</a></p></li>
+general audience.<a href="#fnref14" class="footnote-back">↩︎</a></p></li>
+<li id="fn15"><p>DNF, YUM, and APT technically do dependency solving,
+but their package repositories often have just one version of a package
+dependency. Usually, only a handful of repositories are enabled. These
+package managers <em>can</em> do dependency solves, but often not
+efficiently because they rarely encounter large ones.<a href="#fnref15" class="footnote-back">↩︎</a></p></li>
+<li id="fn16"><p>TODO: Is everything really relocatable?<a href="#fnref16" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div></section><section id="aio-environment_specifications"><p>Content from <a href="environment_specifications.html">Environment specifications</a></p>
 <hr>
-<p>Last updated on 2024-05-08 |
+<p>Last updated on 2024-05-21 |
         
         <a href="https://github.com/charmoniumQ/reproducibility-carpentry/edit/main/episodes/environment_specifications.Rmd" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <div class="text-end">
@@ -914,7 +1044,7 @@ Wright</a><a href="#fnref2" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div></section><section id="aio-containerization_and_virtualization"><p>Content from <a href="containerization_and_virtualization.html">Containerization and virutalization</a></p>
 <hr>
-<p>Last updated on 2024-04-24 |
+<p>Last updated on 2024-05-21 |
         
         <a href="https://github.com/charmoniumQ/reproducibility-carpentry/edit/main/episodes/containerization_and_virtualization.Rmd" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <div class="text-end">
@@ -945,9 +1075,10 @@ reproducibility</li>
 </div>
 </div>
 </div>
-</div></section><section id="aio-reproducible_software_environments"><p>Content from <a href="reproducible_software_environments.html">Engineering Reproducible Software</a></p>
+</div>
+<p>Also consider architectures</p></section><section id="aio-reproducible_software_environments"><p>Content from <a href="reproducible_software_environments.html">Engineering Reproducible Software</a></p>
 <hr>
-<p>Last updated on 2024-05-08 |
+<p>Last updated on 2024-05-21 |
         
         <a href="https://github.com/charmoniumQ/reproducibility-carpentry/edit/main/episodes/reproducible_software_environments.Rmd" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <div class="text-end">
@@ -979,7 +1110,7 @@ reproducibility</li>
 </div>
 </div></section><section id="aio-engineering_reproducible_software"><p>Content from <a href="engineering_reproducible_software.html">Package managers in practice</a></p>
 <hr>
-<p>Last updated on 2024-05-08 |
+<p>Last updated on 2024-05-21 |
         
         <a href="https://github.com/charmoniumQ/reproducibility-carpentry/edit/main/episodes/engineering_reproducible_software.Rmd" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <div class="text-end">
@@ -1034,7 +1165,7 @@ reproducibility</li>
         <p>Materials licensed under <a href="LICENSE.html">CC-BY 4.0</a> by the authors</p>
         
         <p>Template licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" class="external-link">CC-BY 4.0</a> by <a href="https://carpentries.org/" class="external-link">The Carpentries</a></p>
-        <p>Built with <a href="https://github.com/carpentries/sandpaper/tree/0.16.4" class="external-link">sandpaper (0.16.4)</a>, <a href="https://github.com/carpentries/pegboard/tree/0.7.5" class="external-link">pegboard (0.7.5)</a>, and <a href="https://github.com/carpentries/varnish/tree/1.0.2" class="external-link">varnish (1.0.2)</a></p>
+        <p>Built with <a href="https://github.com/carpentries/sandpaper" class="external-link">sandpaper (0.16.4)</a>, <a href="https://github.com/carpentries/pegboard" class="external-link">pegboard (0.7.5)</a>, and <a href="https://github.com/carpentries/varnish" class="external-link">varnish (1.0.2)</a></p>
 			</div>
 		</footer>
 </div> <!-- / div.container -->
@@ -1057,8 +1188,8 @@ reproducibility</li>
   "url": "https://charmoniumQ.github.io/reproducibility-carpentry/aio.html",
   "identifier": "https://charmoniumQ.github.io/reproducibility-carpentry/aio.html",
   "dateCreated": "2024-04-24",
-  "dateModified": "2024-05-14",
-  "datePublished": "2024-05-14"
+  "dateModified": "2024-05-21",
+  "datePublished": "2024-05-21"
 }
 
   </script><script>
