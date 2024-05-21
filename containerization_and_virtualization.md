@@ -15,3 +15,5 @@ exercises: 2
 - To explain how containers and virtual machines may be used for reproducibility
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
+
+Also consider architectures
