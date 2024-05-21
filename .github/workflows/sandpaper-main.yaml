@@ -63,7 +63,7 @@ jobs:
 
       - name: "Deploy Site"
         run: |
-          cat | nix develop --command Rscript <<EOF
+          cat | nix develop --command Rscript /dev/stdin <<EOF
           reset <- "${{ github.event.inputs.reset }}" == "true"
           sandpaper::package_cache_trigger(TRUE)
           sandpaper:::ci_deploy(reset = reset)
