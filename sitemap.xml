@@ -64,6 +64,9 @@
     <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/key-points.html</loc>
   </url>
   <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/notes.html</loc>
+  </url>
+  <url>
     <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/package_management.html</loc>
   </url>
   <url>
@@ -85,6 +88,9 @@
     <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/reproducible_software_environments.html</loc>
   </url>
   <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor/scatter_gather.html</loc>
+  </url>
+  <url>
     <loc>https://charmoniumQ.github.io/reproducibility-carpentry/instructor-notes.html</loc>
   </url>
   <url>
@@ -92,6 +98,9 @@
   </url>
   <url>
     <loc>https://charmoniumQ.github.io/reproducibility-carpentry/key-points.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/notes.html</loc>
   </url>
   <url>
     <loc>https://charmoniumQ.github.io/reproducibility-carpentry/package_management.html</loc>
@@ -113,5 +122,8 @@
   </url>
   <url>
     <loc>https://charmoniumQ.github.io/reproducibility-carpentry/reproducible_software_environments.html</loc>
+  </url>
+  <url>
+    <loc>https://charmoniumQ.github.io/reproducibility-carpentry/scatter_gather.html</loc>
   </url>
 </urlset>
