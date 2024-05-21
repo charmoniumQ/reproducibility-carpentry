@@ -92,9 +92,23 @@
               varnish
             ];
           };
+          newer-snakemake = pkgs.snakemake.overrideAttrs (self: super: rec {
+            version = "8.11.6";
+            pname = "snakemake";
+            src = pkgs.fetchFromGitHub {
+              owner = "snakemake";
+              repo = pname;
+              rev = "refs/tags/v${version}";
+              hash = "sha256-00Zh8NenBikdingmx34WYYH5SF+yazeAs+7h1/3UIJY=";
+              # https://github.com/python-versioneer/python-versioneer/issues/217
+              postFetch = ''
+                sed -i "$out"/snakemake/_version.py -e 's#git_refnames = ".*"#git_refnames = " (tag: v${version})"#'
+              '';
+            };
+          });
         };
         devShells = {
-          default = pkgs.mkShell {
+          sandpaper = pkgs.mkShell {
             buildInputs = [
               pkgs.texlive.combined.scheme-full
               pkgs.pandoc
@@ -109,6 +123,13 @@
             shellHook = ''
               alias R='R --no-restore --no-save'
             '';
+          };
+          snakemake = pkgs.mkShell {
+            buildInputs = [
+              pkgs.graphviz
+              pkgs.xdot
+              (pkgs.python312.withPackages(ps: [ ps.pyyaml packages.newer-snakemake ]))
+            ];
           };
         };
       }
