@@ -1,0 +1,158 @@
+import pathlib
+import urllib.parse
+import yaml
+
+python = "/nix/store/c83lbfn3pq171m8xz19prxaf9b3fzk3m-python3-3.12.3-env/bin/python3.12"
+
+# scattergather:
+#     commits=3,
+#     projects=3,
+
+rule all:
+  input:
+    "data/results.html"
+
+url_encoded_pattern = "[A-Za-z0-9_.+~%-]*"
+wildcard_constraints:
+  pkg_mgr = "[a-z]*",
+  project_part = url_encoded_pattern,
+  commit_part = url_encoded_pattern,
+
+checkpoint find_github_projects:
+  input:
+    "inputs/{pkg_mgr}/files.yaml",
+  params:
+    sample_n_projects = 2
+  output:
+    "data/pkg_mgrs/{pkg_mgr}/projects.yaml",
+  shell:
+    """
+      cat <<EOF | {python} > {output}
+      import yaml
+      print(yaml.dump([dict(name="{wildcards.pkg_mgr} proj " + str(i)) for i in range({params.sample_n_projects})]))
+      EOF
+    """.replace("{python}", python).replace("\n      ", "\n")
+
+rule splat_projects:
+  input:
+    "data/pkg_mgrs/{pkg_mgr}/projects.yaml",
+  output:
+    #scatter.projects("data/{{pkg_mgr}}/projects/{scatteritem}.yaml"),
+    directory=directory("data/pkg_mgrs/{pkg_mgr}/projects"),
+    marker="data/pkg_mgrs/{pkg_mgr}/projects/directory_marker",
+  shell:
+    f"{python} splat_yaml_list.py {{input}} {{output.directory}} && touch {{output.marker}}"
+
+checkpoint identify_touching_commits:
+  input:
+    "inputs/{pkg_mgr}/files.yaml",
+    "data/pkg_mgrs/{pkg_mgr}/projects/directory_marker",
+  params:
+    sample_n_commits = 2
+  output:
+    "data/pkg_mgrs/{pkg_mgr}/projects/{project}/commits.yaml",
+  shell:
+    """
+      cat <<EOF | {python} > {output}
+      import yaml, pathlib
+      print(yaml.dump([dict(name="commit " + str(i)) for i in range({params.sample_n_commits})]))
+      EOF
+    """.replace("{python}", python).replace("\n      ", "\n")
+
+rule splat_commits:
+  input:
+    "data/pkg_mgrs/{pkg_mgr}/projects/{project}/commits.yaml",
+  output:
+    #scatter.commits("data/{{pkg_mgr}}/projects/{{project}}/commits/{scatteritem}.yaml"),
+    directory=directory("data/pkg_mgrs/{pkg_mgr}/projects/{project}/commits/"),
+    marker="data/pkg_mgrs/{pkg_mgr}/projects/{project}/commits/directory_marker",
+  shell:
+    f"{python} splat_yaml_list.py {{input}} {{output.directory}} && touch {{output.marker}}"
+
+rule check_commits:
+  input:
+    "data/pkg_mgrs/{pkg_mgr}/projects/{project}/commits/directory_marker",
+  output:
+    "data/pkg_mgrs/{pkg_mgr}/projects/{project}/commits/{commit}/status.yaml",
+  shell:
+    "cat {input} > {output}"
+
+# TODO: Only apply this rule to the commits whose status was success
+rule check_working_commits:
+  input:
+    "data/pkg_mgrs/{pkg_mgr}/projects/{project}/commits/{commit}/status.yaml",
+  output:
+    "data/pkg_mgrs/{pkg_mgr}/projects/{project}/commits/{commit}/status_extra.yaml",
+  shell:
+    "cat {input} > {output}"
+
+rule post_process_commits:
+  input:
+    "data/pkg_mgrs/{pkg_mgr}/projects/{project}/commits/{commit}/status.yaml",
+    "data/pkg_mgrs/{pkg_mgr}/projects/{project}/commits/{commit}/status_extra.yaml",
+  output:
+    "data/pkg_mgrs/{pkg_mgr}/projects/{project}/commits/{commit}/processed.yaml",
+  shell:
+    "touch {output} && cat {input} > {output}"
+
+def get_commits(wildcards):
+  commits_file = pathlib.Path(checkpoints.identify_touching_commits.get(**wildcards).output[0])
+  if commits_file.exists():
+    projects = yaml.safe_load(commits_file.read_text())
+    return [
+      f"data/pkg_mgrs/{wildcards.pkg_mgr}/projects/{wildcards.project}/commits/{urllib.parse.quote_plus(project['name'])}/processed.yaml"
+      for project in projects
+    ]
+  else:
+    return []
+
+rule reduce_commits:
+    input:
+      "data/pkg_mgrs/{pkg_mgr}/projects/{project}/commits.yaml",
+      get_commits,
+      #gather.commits("data/{{pkg_mgr}}/projects/{{project}}/commits/{scatteritem}/processed.yaml"),
+    output:
+      "data/pkg_mgrs/{pkg_mgr}/projects/{project}/reduced.yaml",
+    shell:
+      "cat {input} > {output}"
+
+def get_projects(wildcards):
+  projects_file = pathlib.Path(checkpoints.find_github_projects.get(**wildcards).output[0])
+  if projects_file.exists():
+    projects = yaml.safe_load(projects_file.read_text())
+    return [
+      f"data/pkg_mgrs/{wildcards.pkg_mgr}/projects/{urllib.parse.quote_plus(project['name'])}/reduced.yaml"
+      for project in projects
+    ]
+  else:
+    return []
+
+rule reduce_projects:
+  input:
+    "data/pkg_mgrs/{pkg_mgr}/projects.yaml",
+    get_projects,
+    #gather.commits("data/{{pkg_mgr}}/projects/{scatteritem}/reduced.yaml"),
+  output:
+    "data/pkg_mgrs/{pkg_mgr}/reduced.yaml",
+  shell:
+    "cat {input} > {output}"
+
+rule reduce_all:
+  input:
+    expand("data/pkg_mgrs/{pkg_mgr}/reduced.yaml", pkg_mgr=["conda", "spack"]),
+    # , "pip", "renv"
+  output:
+    "data/reduced.yaml"
+  shell:
+    "cat {input} > {output}"
+
+rule plot_data:
+  input:
+    "data/reduced.yaml"
+  output:
+    "data/results.html"
+  shell:
+    """
+        touch {output}
+        cat {input} >> {output}
+    """
