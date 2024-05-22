@@ -262,7 +262,7 @@
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1></h1>
-        <p>Last updated on 2024-05-21 |
+        <p>Last updated on 2024-05-22 |
         
         <a href="https://github.com/charmoniumQ/reproducibility-carpentry/edit/main/github_mining/scatter_gather.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
         
@@ -274,37 +274,85 @@
 
         
 
-<p>Scatter/map/gather is a good “challenge problem” to assess the
-flexibility of workflow engines. The problem is: given
-<code>f: () -&gt; Bag[T]</code>, <code>g: T -&gt; U</code>,
-<code>h: Bag[U] -&gt; U</code> (associative), compute
-<code>h([g(elem) for elem in f()])</code>. The DAG would look like:
-<code>f -&gt; g0; f -&gt; g1; ... f -&gt; gn; g0 -&gt; h; g1 -&gt; h; ... gn -&gt; h;</code></p>
+<section id="the-problem"><h2 class="section-heading">The problem<a class="anchor" aria-label="anchor" href="#the-problem"></a>
+</h2>
+<hr class="half-width"><p>For this lesson, I thought I would test how many Conda lockfiles are
+resolvable today compared to the number of Spack lockfiles. That
+workflow would contain 3 for-loops, where I want to map a function over
+each value of a list:</p>
+<pre><code>for package_manager in package_managers():
+    for project in mine_github for projects():
+        for commit in mine_project_for_commits():
+            result = test(package_manager, project, commit)
+            # aggregation code not shown</code></pre>
+<p>I know how many package managers I am testing ahead of time, but not
+the number of relevant projects on GitHub or commits for each project.
+Also the absolute numbers are quite large; I could have thousands of
+projects each with hundreds of commits. This necessitates using the
+“scatter/gather” paradigm of workflows.</p>
+<p>This is when I realized Scatter/gather is a good “challenge problem”
+to assess the flexibility of workflow engines. Abstraclty, the problem
+is given {<code>f: () -&gt; Bag[T]</code>, <code>g: T -&gt; U</code>,
+<code>h: Bag[U] -&gt; U</code>, and <code>h</code> is associative},
+compute <code>h([g(elem) for elem in f()])</code>.</p>
 <p>There are several questions we can ask about a given workflow
 engine’s solution to this challenge problem.</p>
-<ul><li>Does the workflow model <code>g</code> as operating on single
-elements or partitions of elements?
-<ul><li>This is important for reusability; there might already be a wrapper
-that operates on single elements, so it can be more easily reused if the
-“map” part of scatter/map/gather operates on single-elements.</li>
-<li>Perhaps more importantly, if the workflow engine offers caching, the
-cache-key of <code>g</code> should be a single element, not a partition.
-If the cache-key is a partition, if any element within the partition
-changes, the entire cache entry is invalid. If any element is inserted
-or removed in this partition or a prior one, the entire cache entry is
+<ul><li>
+<strong>Semantically batched g or single g</strong>: Does the
+workflow model <code>g</code> as operating on single elements or batch
+of elements?
+<ul><li>If the workflow engine offers caching, the cache-key of
+<code>g</code> should be a single element, not a partition. If the
+cache-key is a partition, if any element within the partition changes,
+the entire cache entry is invalid. If any element is inserted or removed
+in this partition or a prior one, the entire cache entry is
 invalid.</li>
+<li>This is also important for reusability; there might already be a
+wrapper that operates on single elements, so it can be more easily
+reused if the “map” part of scatter/map/gather operates on
+single-elements.</li>
 </ul></li>
-<li>Does the workflow schedule one jobs of <code>g</code> for every
-element or does it batch jobs of <code>g</code>?
+<li>
+<strong>Schedule batched g or single g</strong>: Does the workflow
+schedule one jobs of <code>g</code> for every output of <code>f</code>
+or one job of batched-<code>g</code> for every batch of outputs of
+<code>f</code>?
 <ul><li>If the output of <code>f</code> is large and <code>g</code> is
 relatively fast, then scheduling one job per element creates contention
 on the scheduler. While the programmer should “see” <code>g</code>
 operating on a single-element, under-the-hood, the workflow engine
 should probably schedule <code>g</code> in a fixed-number of
-almost-equal batches.</li>
+almost-equal batches. This only matters if the product of the
+cardinality of the output <code>f</code> times the scheduler overhead
+per task is a significant fraction of the execution time. I think many
+real-world workflows, like my GitHub mining workflow, would require
+batching.</li>
 </ul></li>
-<li>Does a visualization of the workflow DAG contain multiple copies of
-<code>g</code>?
+<li>
+<strong>Blocking/streaming g and h</strong>: Can jobs of
+<code>g</code> be dispatched while the <code>f</code> is still in
+progress? Can jobs of <code>h</code> be dispatched while some jobs of
+<code>g</code> are still in progress?
+<ul><li>
+<code>f</code> may be able to output its first result quickly, but
+take much longer to get to its last result. Ideally, the system can be
+working on the first few jobs of <code>g</code> while the last few
+results of <code>f</code> are coming in, to maximize parallelism. As in
+a tree-reduction, <code>h</code> is The workflow engine should assume
+that <code>h</code> is associative, so
+<code>h([u0, u1, u2, u3]) == h([h([u0, u1]), h([u2, u3])])</code>.
+<code>h([u0, u1])</code> need not wait for <code>u2</code> and
+<code>u3</code> to become available. The streaming-<code>g</code>
+feature only matters for workloads where computing all of <code>f</code>
+is slow, but computing the first result (or first batch of results) of
+<code>f</code> is fast. The streaming-<code>h</code> feature only
+matters when <code>h</code> is slow. I believe my many workflows,
+including my GitHub mining workflow, would benefit from
+streaming-<code>g</code> and streaming-<code>h</code>.</li>
+</ul></li>
+<li>
+<strong>De/duplicated visualization</strong>: Does a visualization
+of the workflow DAG contain multiple copies of <code>g</code>?
 <ul><li>Ideally, the workflow engine would support two visualizations: one
 showing how the workflow is coded and another showing how it is
 executed. The coding-visualization should not show multiple copies of
@@ -318,88 +366,158 @@ partitions to 1 for the sake of plotting the coding-visualization from a
 workflow engine that only has an execution-visualization. However, one
 would still have to change the node shapes or bold the arrows.</li>
 </ul></li>
-<li>Can jobs of <code>g</code> be dispatched while the <code>f</code> is
-still in progress? Can jobs of <code>h</code> be dispatched while some
-jobs of <code>g</code> are still in progress?
-<ul><li>
-<code>f</code> may be able to output its first result quickly, but
-take much longer to get to its last result. Ideally, the system can be
-working on the first few jobs of <code>g</code> while the last few
-results of <code>f</code> are coming in, to maximize parallelism. As in
-a tree-reduction, <code>h</code> is The workflow engine should assume
-that <code>h</code> is associative, so
-<code>h([u0, u1, u2, u3]) == h([h([u0, u1]), h([u2, u3])])</code>.
-<code>h([u0, u1])</code> need not wait for <code>u2</code> and
-<code>u3</code> to become available. This only matters for
-performance-sensitive workloads where the scheduler would become swamped
-by the number of <code>f</code> outputs and overhead of dispatching
-<code>g</code>.</li>
-</ul></li>
-<li>Snakemake has two possible implementations of scatter/gather:
+</ul></section><section id="results"><h2 class="section-heading">Results<a class="anchor" aria-label="anchor" href="#results"></a>
+</h2>
+<hr class="half-width"><ul><li>Snakemake has two possible implementations of scatter/gather:
+<code>g</code> will not be cached effectively (former solution) XOR
+<code>g</code> will be batched (latter solution). In either case,
+Snakemake has streaming-<code>g</code> but not streaming-<code>h</code>;
+there is no way to indicate that <code>h</code> is a reduction.
 <ul><li>Literal <a href="https://snakemake.readthedocs.io/en/v8.11.6/snakefiles/rules.html#defining-scatter-gather-processes" class="external-link"><code>scatter</code>/<code>gather</code>
-functions</a> partition a list into a fixed number of almost-equal
-partitions. <code>f</code>’s between-invocations cache is invalidated if
-<strong>any</strong> item in the partition was modified or if any item
-was inserted or deleted before the start of a given partition.
-<code>g</code> can be launched in as soon as a batch is ready, but
-<code>h</code> has to wait for all of them to complete because there is
-no way to indicate to Snakemake that <code>h</code> is a reduction.</li>
-<li>Specify the <code>input</code> dynamically (formerly
-<code>dyanamic</code>, now <a href="https://snakemake.readthedocs.io/en/v8.11.6/snakefiles/rules.html#data-dependent-conditional-execution" class="external-link"><code>checkpoint</code></a>).
-<code>g</code> can be launched in as soon as a batch is ready, but
-<code>h</code> has to wait for all of them to complete because there is
-no way to indicate to Snakemake that <code>h</code> is a reduction.</li>
+functions</a>.
+<ul><li>
+<strong>Semantically batched g</strong>: ❌. Snakemake has
+between-workflow caching, but the cache-key depends on the whole
+batch.</li>
+<li>
+<strong>Schedule batched g</strong>: ✅</li>
+<li>
+<strong>Streaming g</strong>: ✅</li>
+<li>
+<strong>Blocking h</strong> ❌. Snakemake has no way of indicating
+that <code>h</code> is associative, so it has no way of streaming
+<code>h</code>.</li>
+<li>
+<strong>Duplicated visualization</strong>: ❌</li>
 </ul></li>
-<li>Parsl: doesn’t refer to scatter/gather by name, but it can implement
+<li>Specify the <code>input</code> dynamically (formerly
+<code>dyanamic</code>, now <a href="https://snakemake.readthedocs.io/en/v8.11.6/snakefiles/rules.html#data-dependent-conditional-execution" class="external-link"><code>checkpoint</code></a>):
+<ul><li>
+<strong>Semantically single g</strong>: ✅</li>
+<li>
+<strong>Schedule single g</strong>: ❌</li>
+<li>
+<strong>Streaming g</strong>: ✅</li>
+<li>
+<strong>Blocking h</strong> ❌. As before, there is no indicator in
+Snakemake that <code>h</code> is associative.</li>
+<li>
+<strong>Incomplete or deduplicated visualization</strong>: ❌.
+Visualizing before execution does not show the dynamic edges;
+visualizing after shows the dynamic edges duplicated for each item.</li>
+</ul></li>
+</ul></li>
+<li>Parsl doesn’t refer to scatter/gather by name, but it can implement
 them with <a href="https://parsl.readthedocs.io/en/stable/userguide/joins.html" class="external-link"><code>join_app</code>s</a>:
 <code>join_app_g_h(f())</code> where
-<code>join_app_g_h = parsl.join_app(lambda lst: h(*[g(elem) for elem in lst]))</code>.
-Parsl’s <a href="https://parsl.readthedocs.io/en/stable/userguide/checkpoints.html" class="external-link">between-invocation
-caching</a> would probably work on <code>g</code>. Parsl cannot however
-stream jobs of <code>g</code> and jobs of <code>h</code>.</li>
-<li>Dask: <code>f().map(g).reduction(list, h)</code>. Dask has no
+<code>join_app_g_h = parsl.join_app(lambda lst: h(*[g(elem) for elem in lst]))</code>
+(due to Ben Clifford).
+<ul><li>
+<strong>Semantically single g</strong>: ✅</li>
+<li>
+<strong>Schedule single g</strong>: 🤔. However, Parsl’s scheduler
+is highly performant with a many tasks, so this might be more ok.</li>
+<li>
+<strong>Streaming g</strong>: ❌. <code>f</code> returns a Python
+list, so the whole object has to be constructed before
+iterating/dispatching g.</li>
+<li>
+<strong>Streaming (DIY) h</strong> ✅. Parsl doesn’t have any helper
+for implementing reduce, and their <a href="https://parsl.readthedocs.io/en/stable/userguide/workflow.html#mapreduce" class="external-link">MapReduce</a>
+example uses naive blocking reduce, but since the workflow-description
+is arbitrary Python code, we can code up a reduction that dispatches a
+tree-reduction.</li>
+</ul></li>
+<li>Dask: <code>f().map(g).reduction(list, h)</code>.
+<ul><li>
+<strong>Semantically single g</strong>: ✅. Note that Dask has no
 first-party between-invocation caching, but a third-party solution could
-work. The scheduler would partition the bag into a fixed-number of
-almost-equal partitions (can be rebalanced by inserting
-<code>.repartition(n_partitions=n)</code>), but the <code>g</code> would
-operate on single-items. <code>g</code>’s cache would be reusable. Due
-to representing batches in the DAG, a batch of <code>g</code> can run as
-soon as its batch of <code>f</code>-output is ready. <a href="https://docs.dask.org/en/stable/generated/dask.bag.Bag.reduction.html#dask.bag.Bag.reduction" class="external-link">Reductions</a>
+work (e.g., <a href="https://charmoniumq.github.io/charmonium.cache/" class="external-link">charmonium.cache</a>),
+since g semantically operates on single items.</li>
+<li>
+<strong>Schedule batch g</strong>: ✅.</li>
+<li>
+<strong>Streaming g</strong>: ✅. Due to representing batches of
+<code>g</code> in the DAG, Dask has streaming g.</li>
+<li>
+<strong>“Semi-streaming h”</strong> 🤔. <a href="https://docs.dask.org/en/stable/generated/dask.bag.Bag.reduction.html#dask.bag.Bag.reduction" class="external-link">Reductions</a>
 is implemented in 2-levels: <code>h</code> on each partition, and
 <code>h</code> on the result of that. The former invocation of
 <code>h</code> is dispatchable as soon as the batch of <code>g</code> is
-done, but the second invocation has to wait for all. If there are a
-small number of partitions, this is not a big problem, however, this
-opposes our desire to combat worker imbalance by using a large number of
-partitions.</li>
-<li>Spark/PySpark: <code>f().map(g).reduce(h)</code>. Spark has no
-first-party between-invocation caching, but a third-party solution could
-work. <code>g</code> operates on single-items. I believe Spark can
-optimize map-reduce queries, but I couldn’t dig enough into the
-internals easily.</li>
+done, but the second invocation has to wait for all; this is
+“in-between” fully streaming-<code>h</code> and fully
+blocked-<code>h</code>. If there are a small number of partitions, this
+is not a big problem, however, this opposes our desire to combat worker
+imbalance by using a large number of partitions.</li>
+</ul></li>
 <li>WDL has <a href="https://github.com/openwdl/wdl/blob/wdl-1.1/SPEC.md#scatter-statement" class="external-link">scatter/gather</a>.
-Scatter outputs <code>Array[X]</code> and gather inputs
-<code>Array[X]</code>, so I think it is unlikely that an implementation
-would be able to launch streaming jobs. The standard has no mention of
-cachability, but presumably implementations may implement cachability.
-<code>g</code> inputs a single-element, so presumably the cacheability
-would work. Presumably, implementations may implement partitioning for
-more efficient execution.</li>
-<li>The same can be said about CWL as was said about WDL, but with a
-different link: <a href="http://www.commonwl.org/user_guide/topics/workflows.html#scattering-steps" class="external-link">scatter/gather</a>
+<ul><li>
+<strong>Semantically single g</strong>: ✅</li>
+<li>
+<strong>Schedule batch/single g</strong>: ❔. Depends on
+implementation</li>
+<li>
+<strong>Blocking g</strong>: ❌. Scatter outputs
+<code>Array[X]</code> and gather inputs <code>Array[X]</code>, so I
+think it is unlikely that an implementation would be able to implement
+streaming-g.</li>
+<li>
+<strong>Blocking h</strong> ❌. As with Snakemake, there is no way
+to indicate that <code>h</code> is associative, so no implementation can
+implement streaming-<code>h</code>, without deviating significantly from
+th standard.</li>
+</ul></li>
+<li>The same can be said about CWL as was said about WDL. See their <a href="http://www.commonwl.org/user_guide/topics/workflows.html#scattering-steps" class="external-link">scatter/gather</a>
 </li>
-<li>Cromwell has the limitations inherent to WDL. However, it implements
-<a href="https://cromwell.readthedocs.io/en/latest/cromwell_features/CallCaching/" class="external-link">call
-caching</a>. Cromwell schedules <a href="https://cromwell.readthedocs.io/en/latest/developers/bitesize/workflowExecution/executionAndValueStoreExamples/#handling-scatters" class="external-link">1
+<li>Cromwell has the limitations inherent to WDL:
+<ul><li>
+<strong>Semantically single g</strong>: ✅. Cromwell implements <a href="https://cromwell.readthedocs.io/en/latest/cromwell_features/CallCaching/" class="external-link">call
+caching</a>, which presumably would work well since <code>g</code>
+semantically operates on a single item.</li>
+<li>
+<strong>Schedule single g</strong>: ❌. Cromwell schedules <a href="https://cromwell.readthedocs.io/en/latest/developers/bitesize/workflowExecution/executionAndValueStoreExamples/#handling-scatters" class="external-link">1
 job per element</a>.</li>
-<li>Toil does not appear to have caching. What they refer to as <a href="https://toil.readthedocs.io/en/latest/appendices/architecture.html#caching" class="external-link">caching</a>
+<li>
+<strong>Blocking g</strong>: ❌, due to WDL.</li>
+<li>
+<strong>Blocking h</strong> ❌, due to WDL.</li>
+</ul></li>
+<li>Toil
+<ul><li>
+<strong>Semantically single g</strong>: ✅. Toil does not appear to
+have caching. What they refer to as <a href="https://toil.readthedocs.io/en/latest/appendices/architecture.html#caching" class="external-link">caching</a>
 in their documentation refers to within-invocation,
-same-computational-node. Toil appears to create <a href="https://toil.readthedocs.io/en/latest/appendices/architecture.html#toil-support-for-common-workflow-language" class="external-link">1
+same-computational-node. However, changing Toil or injecting caching
+from a preprocessor step would be possible since <code>g</code>
+semantically operates on a single items.</li>
+<li>
+<strong>Schedule single g</strong>: ❌. Toil appears to create <a href="https://toil.readthedocs.io/en/latest/appendices/architecture.html#toil-support-for-common-workflow-language" class="external-link">1
 job per element</a>.</li>
+<li>
+<strong>Blocking g</strong>: ❌, due to CWL.</li>
+<li>
+<strong>Blocking h</strong> ❌, due to CWL.</li>
+</ul></li>
+<li>Spark/PySpark: <code>f().map(g).reduce(h)</code>.
+<ul><li>
+<strong>Semantically single g</strong>: ✅. Spark has no first-party
+between-invocation caching, but a third-party solution could work (e.g.,
+<a href="https://charmoniumq.github.io/charmonium.cache/" class="external-link">charmonium.cache</a>),
+since <code>g</code> semantically operates on single-items.</li>
+<li>
+<strong>Schedule g</strong>: ❔. I couldn’t dig through the Spark
+internals to determine this.</li>
+<li>
+<strong>Streaming g</strong>: ✅, believe Spark can utilize
+streaming-<code>g</code> and streaming-<code>h</code> in its query
+planner, but I couldn’t dig enough into the internals easily.</li>
+<li>
+<strong>Streaming h”</strong> ✅.</li>
+</ul></li>
 </ul><!-- 
 Place links that you need to refer to multiple times across pages here. Delete
 any links that you are not going to use. 
- --></div> <!-- / div.lesson-content -->
+ --></section></div> <!-- / div.lesson-content -->
     </main><!-- / main#main-content.main-content --><nav class="bottom-pagination mx-md-4" aria-label="Previous and Next Chapter"><div class="d-block d-sm-block d-md-none">
         <a class="chapter-link" href="index.html"><i aria-hidden="true" class="small-arrow" data-feather="arrow-left"></i>Previous</a>
         <a class="chapter-link float-end" href="index.html">Next<i aria-hidden="true" class="small-arrow" data-feather="arrow-right"></i></a>
@@ -457,8 +575,8 @@ any links that you are not going to use.
   "url": "https://charmoniumQ.github.io/reproducibility-carpentry/scatter_gather.html",
   "identifier": "https://charmoniumQ.github.io/reproducibility-carpentry/scatter_gather.html",
   "dateCreated": "2024-04-24",
-  "dateModified": "2024-05-21",
-  "datePublished": "2024-05-21"
+  "dateModified": "2024-05-22",
+  "datePublished": "2024-05-22"
 }
 
   </script><script>
